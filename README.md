@@ -19,6 +19,14 @@ Active the corresponding environment using the below code
 . .venv/bin/activate
 ```
 
+## Install requirements
+
+Run the code below to install libraries and framework from requirements.txt
+
+```
+pip install -r requirements.txt 
+```
+
 
 ## Initialize Database File
 
