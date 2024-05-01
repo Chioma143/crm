@@ -1,0 +1,122 @@
+{% extends 'base.html' %} {% block content %}
+<div class="d-block bg-white rounded p-4 mb-3">
+  <p class="d-inline-flex gap-1">
+    <a
+      class="btn btn-primary"
+      data-bs-toggle="collapse"
+      href="#collapseExample"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapseExample"
+    >
+      Create Customer
+    </a>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label for="CompanyName" class="form-label">Name</label>
+          <input type="text" name="name" required class="form-control" id="CompanyName" />
+        </div>
+        <div class="mb-3">
+          <label for="CompanyIndustry" class="form-label">Industry</label>
+          <input type="text" name="industry" required class="form-control" id="CompanyIndustry" />
+        </div>
+        <div class="mb-3">
+          <label for="CompanyLocation" class="form-label">Location</label>
+          <input type="text" name="location" required class="form-control" id="CompanyLocation" />
+        </div>
+        <div class="mb-3">
+          <label for="UserDataList" class="form-label">Customer</label>
+          <input
+            class="form-control"
+            name="customer"
+            list="datalistOptions"
+            id="UserDataList"
+            placeholder="Type to search..."
+          />
+          <datalist id="datalistOptions">
+            {% for user in users %}
+            <option value="{{ user.UserID }}">{{ user.Email }}</option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- <h1 class="fs-2 text-primary">Customers</h1> -->
+
+  <!-- <table class="table table-striped caption-top">
+    <caption>List of customers</caption>
+    <thead class="table-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Industry</th>
+        <th scope="col">Location</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      <tr>
+        <th scope="row">2</th>
+        <td>Jacob</td>
+        <td>Thornton</td>
+        <td>@fat</td>
+      </tr>
+    </tbody>
+  </table> -->
+
+  <table class="table table-striped caption-top">
+    <caption>
+      List of customers
+    </caption>
+    <thead class="table-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Industry</th>
+        <th scope="col">Location</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ customer.CompanyName }}</td>
+        <td>{{ customer.Industry }}</td>
+        <td>{{ customer.Location }}</td>
+        <td>
+          <a href="/customer/{{ customer.CompanyID }}/delete">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  
+  <nav>
+  <ul class="pagination">
+    <li class="page-item {% if not has_prev %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('customer.index', page=page - 1) }}">Previous</a>
+    </li>
+    <li class="page-item {% if not has_next %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('customer.index', page=page + 1) }}">Next</a>
+    </li>
+  </ul>
+</nav>
+
+
+</div>
+
+{% endblock %}

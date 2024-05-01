@@ -1,6 +1,7 @@
 import os
 
 from flask import (Flask, render_template)
+from flaskr.auth import login_required
 
 def create_app(test_config=None):
     # create and configure the app
@@ -9,8 +10,11 @@ def create_app(test_config=None):
         SECRET_KEY='CRM-DEV100',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
-    from . import db
+    from . import (db, auth, customer, group)
     db.init_app(app)
+    app.register_blueprint(auth.blueprint)
+    app.register_blueprint(customer.blueprint)
+    app.register_blueprint(group.blueprint)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -27,6 +31,7 @@ def create_app(test_config=None):
 
     # routes
     @app.route('/')
+    @login_required
     def index():
         return render_template('dashboard.html')
 
