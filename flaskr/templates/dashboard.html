@@ -1,16 +1,14 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="d-block bg-white rounded p-4 mb-3">
-  <h1 class="fs-2 text-primary">Good Morning, Chioma James!</h1>
+  <h1 class="fs-2 text-primary">Hello, {% if g.user %} {{ g.user.username }} {% else %} Chioma James {% endif %}</h1>
   <small class="text-secondary">Welcome back</small>
 </div>
 <div class="row mb-3">
   <div class="col">
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
-        <p class="card-text small text-primary">Total Requests</p>
-        <h5 class="card-title text-primary fs-1 fw-bold">200</h5>
+        <p class="card-text small text-primary">Total Industries</p>
+        <h5 class="card-title text-primary fs-1 fw-bold">{{ total_industries }}</h5>
       </div>
     </div>
   </div>
@@ -18,7 +16,7 @@
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
         <p class="card-text small text-primary">Customers</p>
-        <h5 class="card-title text-success fs-1 fw-bold">310</h5>
+        <h5 class="card-title text-success fs-1 fw-bold">{{ total_customers }}</h5>
       </div>
     </div>
   </div>
@@ -26,7 +24,7 @@
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
         <p class="card-text small text-primary">Total Users</p>
-        <h5 class="card-title text-warning fs-1 fw-bold">430</h5>
+        <h5 class="card-title text-warning fs-1 fw-bold">{{ total_users }}</h5>
       </div>
     </div>
   </div>
@@ -34,7 +32,7 @@
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
         <p class="card-text small text-primary">Total Revenue</p>
-        <h5 class="card-title text-info fs-1 fw-bold">$255,000</h5>
+        <h5 class="card-title text-info fs-1 fw-bold">$0</h5>
       </div>
     </div>
   </div>
@@ -320,6 +318,40 @@
       </tbody>
     </table>
   </div>
-  <div class="rounded bg-white col p-4">Empty!!!</div>
+  <div class="rounded bg-white col p-4">
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
+  </div>
 </div>
+
+<script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
+<script>
+  const ctx = document.getElementById('myChart');
+  const chartData = {
+    labels: [],
+    datasets: [
+      {
+        label: 'Number of Companies',
+        data: [],
+        backgroundColor: [],
+        hoverOffset: 4
+      }
+    ]
+  };
+  
+  {% for row in chart %}
+    chartData.labels.push('{{ row.Industry }}');
+    chartData.datasets[0].data.push({{ row.Total }});
+    // Add dynamic background colors (optional)
+    var dynamicColors = () => '#' + Math.floor(Math.random()*16777215).toString(16);
+    chartData.datasets[0].backgroundColor.push(dynamicColors());
+  {% endfor %}
+
+  const config = {
+    type: 'doughnut',
+    data: chartData
+  };
+  new Chart(ctx, config);
+</script>
 {% endblock %}

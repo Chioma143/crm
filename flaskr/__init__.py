@@ -2,6 +2,8 @@ import os
 
 from flask import (Flask, render_template)
 from flaskr.auth import login_required
+from flaskr.db import get_db
+from . import (db, auth, customer, group)
 
 def create_app(test_config=None):
     # create and configure the app
@@ -10,7 +12,7 @@ def create_app(test_config=None):
         SECRET_KEY='CRM-DEV100',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
-    from . import (db, auth, customer, group)
+
     db.init_app(app)
     app.register_blueprint(auth.blueprint)
     app.register_blueprint(customer.blueprint)
@@ -33,7 +35,20 @@ def create_app(test_config=None):
     @app.route('/')
     @login_required
     def index():
-        return render_template('dashboard.html')
+        db = get_db()
+        total_industries = db.execute(
+            "SELECT COUNT(DISTINCT Industry) AS TotalIndustries FROM Company"
+        ).fetchone()[0]
+        total_customers = db.execute(
+            "SELECT COUNT(*) FROM Company"
+        ).fetchone()[0]
+        total_users = db.execute(
+            "SELECT COUNT(*) FROM User"
+        ).fetchone()[0]
+        chart = db.execute(
+            "SELECT Industry, COUNT(*) AS Total FROM Company GROUP BY Industry;"
+        ).fetchall()
+        return render_template('dashboard.html', total_industries=total_industries, total_customers=total_customers, total_users=total_users, chart=chart)
 
     @app.route('/hello')
     def hello():

@@ -1,0 +1,9 @@
+@media (prefers-color-scheme: dark) {
+  .bg-white, .bg-light {
+    background-color: #212529 !important; /* Set your desired dark background color */
+    color: #fff; /* Set text color for better contrast */
+  }
+  .bg-light {
+    background-color: #191b1d !important;
+  }
+}
