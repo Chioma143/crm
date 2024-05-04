@@ -1,7 +1,19 @@
 {% extends 'base.html' %} {% block content %}
 <div class="d-block bg-white rounded p-4 mb-3">
-  <h1 class="fs-2 text-primary">Hello, {% if g.user %} {{ g.user.username }} {% else %} Chioma James {% endif %}</h1>
-  <small class="text-secondary">Welcome back</small>
+  <h1 class="fs-2 text-primary"> 
+    {% if g.user %} 
+      {{ g.user.businessname }} - Dashboard 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </h1>
+  <small class="text-secondary">Welcome back, 
+    {% if g.user %} 
+      {{ g.user.firstname }} {{ g.user.lastname }} 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </small>
 </div>
 <div class="row mb-3">
   <div class="col">
@@ -32,7 +44,7 @@
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
         <p class="card-text small text-primary">Total Revenue</p>
-        <h5 class="card-title text-info fs-1 fw-bold">$0</h5>
+        <h5 class="card-title text-info fs-1 fw-bold">{{ total_sales }}</h5>
       </div>
     </div>
   </div>
@@ -40,286 +52,40 @@
 <div class="row mb-3">
   <div class="rounded col-7">
     <div class="d-flex justify-content-between align-items-center bg-white p-4 border-bottom">
-      <h1 class="lead text-primary fw-bold mb-0">Request Histories</h1>
+      <h1 class="lead text-primary fw-bold mb-0">Recent Sales</h1>
       <small class="text-secondary text-decoration-underline">See all</small>
     </div>
-    <table class="table align-middle table-hover">
-      <thead class="table-light">
+    <table class="table align-middle table-hover table-responsive">
+      <thead>
         <tr>
-          <th scope="col">Order ID</th>
-          <th scope="col">Driver</th>
-          <th scope="col">Location</th>
-          <th scope="col">Distance</th>
-          <th scope="col">Service</th>
-          <th scope="col">Status</th>
+          <th scope="col">Sale ID</th>
+          <th scope="col">Product Name</th>
+          <th scope="col">Customer Name</th>
+          <th scope="col">Product Category</th>
+          <th scope="col">Quantity</th>
+          <th scope="col">Unit Price</th>
+          <th scope="col">Total Price</th>
+          <!-- <th scope="col">Status</th> -->
         </tr>
       </thead>
       <tbody>
+        {% for sale in sales %}
         <tr>
-          <th>DG45H42</th>
-          <td>Isreal Daniel</td>
-          <td>Alausa, Ikeja</td>
-          <td>12km</td>
-          <td>Tow</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
+          <th scope="row">{{ loop.index }}</th>
+          <td>{{ sale.ProductName }}</td>
+          <td>{{ sale.CustomerName }}</td>
+          <td>{{ sale.Category }}</td>
+          <td>{{ sale.Quantity }}</td>
+          <td>{{ sale.Currency }} {{ sale.Price }}</td>
+          <td>{{ sale.Currency }} {{ "{:,.2f}".format(sale.Price * sale.Quantity) }}</td>
+          <!-- <td>{{ sale.ProductName }}</td> -->
         </tr>
-        <tr>
-          <th>DG42F38</th>
-          <td>John Smith</td>
-          <td>Main Street, New York</td>
-          <td>8km</td>
-          <td>Repair</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>DF58J12</th>
-          <td>Alice Johnson</td>
-          <td>Beach Road, Los Angeles</td>
-          <td>15km</td>
-          <td>Jumpstart</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>GH78K90</th>
-          <td>Emily Brown</td>
-          <td>Park Avenue, Chicago</td>
-          <td>20km</td>
-          <td>Repair</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>JK90L23</th>
-          <td>Michael Williams</td>
-          <td>High Street, London</td>
-          <td>10km</td>
-          <td>Jumpstart</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>DG45H42</th>
-          <td>Isreal Daniel</td>
-          <td>Alausa, Ikeja</td>
-          <td>12km</td>
-          <td>Tow</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>EF78K32</th>
-          <td>John Doe</td>
-          <td>Main Street, Springfield</td>
-          <td>8km</td>
-          <td>Repair</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>AB23C56</th>
-          <td>Jane Smith</td>
-          <td>Oak Street, Oakville</td>
-          <td>15km</td>
-          <td>Jumpstart</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>XY67Z89</th>
-          <td>Alice Johnson</td>
-          <td>Pine Street, Pineville</td>
-          <td>20km</td>
-          <td>Repair</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>JK12L34</th>
-          <td>Emily Brown</td>
-          <td>Cedar Street, Cedartown</td>
-          <td>10km</td>
-          <td>Jumpstart</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>OP90QW56</th>
-          <td>Michael Williams</td>
-          <td>Elm Street, Elmtown</td>
-          <td>25km</td>
-          <td>Tow</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>CD34EF67</th>
-          <td>Sarah Johnson</td>
-          <td>Maple Street, Mapletown</td>
-          <td>18km</td>
-          <td>Repair</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
-        <tr>
-          <th>GH56JK78</th>
-          <td>David Brown</td>
-          <td>Willow Street, Willowtown</td>
-          <td>22km</td>
-          <td>Jumpstart</td>
-          <td>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="green"
-              class="bi bi-dot"
-              viewBox="0 0 20 20"
-            >
-              <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-            </svg>
-            Completed
-          </td>
-        </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
-  <div class="rounded bg-white col p-4">
-    <div>
+  <div class="rounded col">
+    <div class="bg-white rounded p-5">
       <canvas id="myChart"></canvas>
     </div>
   </div>

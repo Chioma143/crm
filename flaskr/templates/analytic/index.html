@@ -1,0 +1,142 @@
+{% extends 'base.html' %} 
+{% block content %}
+<div class="d-block bg-white rounded p-4 mb-3">
+  <h1 class="fs-2 text-primary"> 
+    {% if g.user %} 
+      {{ g.user.businessname }} - Analytics 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </h1>
+  <small class="text-secondary">Analytics of each section in the CRM...</small>
+</div>
+<div class="row mb-3">
+  <div class="col">
+    <div class="card border-0 shadow-sm bg-main-secondary">
+      <div class="card-body">
+        <p class="card-text small text-primary">Total Products Sold</p>
+        <h5 class="card-title text-primary fs-1 fw-bold">{{ chart_data.total_products[0] }}</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card border-0 shadow-sm bg-main-secondary">
+      <div class="card-body">
+        <p class="card-text small text-primary">Customers</p>
+        <h5 class="card-title text-success fs-1 fw-bold">{{ chart_data.total_customers[0] }}</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card border-0 shadow-sm bg-main-secondary">
+      <div class="card-body">
+        <p class="card-text small text-primary">Total Sales</p>
+        {% if chart_data.total_sales[0] %}
+          <h5 class="card-title text-warning fs-1 fw-bold">£{{ "{:,.2f}".format(chart_data.total_sales[0]) }}</h5>
+        {% else %}
+          <h5 class="card-title text-warning fs-1 fw-bold">£0.00</h5>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div class="d-block bg-white rounded p-4 mb-3">
+  <div class="row mt-4">
+    <div class="col-lg-6">
+      <canvas id="customer-industry-chart"></canvas>
+    </div>
+    <div class="col-lg-6">
+      <canvas id="product-category-chart"></canvas>
+    </div>
+  </div>
+
+  <div class="row mt-4">
+    <div class="col-lg-6">
+      <canvas id="sales-quantity-chart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
+<script>
+  // Customer Industry Chart
+  var customerIndustryChart = new Chart(document.getElementById('customer-industry-chart'), {
+    type: 'bar',
+    data: {
+      labels: {{ chart_data.customer_industry_labels | tojson }},
+      datasets: [{
+        label: 'Total Customers by Industry',
+        data: {{ chart_data.customer_industry_data | tojson }},
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+
+  // Product Category Chart
+  var productCategoryChart = new Chart(document.getElementById('product-category-chart'), {
+    type: 'bar',
+    data: {
+      labels: {{ chart_data.product_category_labels | tojson }},
+      datasets: [{
+        label: 'Total Products by Category',
+        data: {{ chart_data.product_category_data | tojson }},
+        backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }, {
+        label: 'Average Price by Category',
+        data: {{ chart_data.product_avg_price_data | tojson }},
+        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+
+  // Sales Quantity Chart
+  var salesQuantityChart = new Chart(document.getElementById('sales-quantity-chart'), {
+    type: 'bar',
+    data: {
+      labels: {{ chart_data.sales_quantity_labels | tojson }},
+      datasets: [{
+        label: 'Total Sales Quantity by Product',
+        data: {{ chart_data.sales_quantity_data | tojson }},
+        backgroundColor: 'rgba(255, 159, 64, 0.5)',
+        borderColor: 'rgba(255, 159, 64, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+</script>
+</div>
+
+{% endblock %}

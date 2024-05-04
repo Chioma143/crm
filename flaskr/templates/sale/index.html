@@ -1,0 +1,164 @@
+{% extends 'base.html' %} {% block content %}
+<div class="d-block bg-white rounded p-4 mb-3">
+  <h1 class="fs-2 text-primary"> 
+    {% if g.user %} 
+      {{ g.user.businessname }} - Sales 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </h1>
+  <small class="text-secondary">Sales section in the CRM...</small>
+</div>
+<div class="d-block bg-white rounded p-4 mb-3">
+  <p class="d-inline-flex gap-1">
+    <a
+      class="btn btn-primary"
+      data-bs-toggle="collapse"
+      href="#collapseExample"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapseExample"
+    >
+      Add New Sale
+    </a>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label for="customer" class="form-label">Customer</label>
+          <input type="text" name="customerid" required list="datalistOptionsCustomer" class="form-control" id="customer" placeholder="Search customers..." />
+          <datalist id="datalistOptionsCustomer">
+            {% for customer in customers %}
+              <option value="{{ customer.CustomerID }}">{{ customer.CustomerName }}</option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="mb-3">
+          <label for="product" class="form-label">Product</label>
+          <input type="text" name="productid" required list="datalistOptionsProduct" class="form-control" id="product" placeholder="Search products..." />
+          <datalist id="datalistOptionsProduct">
+            {% for product in products %}
+              <option value="{{ product.ProductID }}">{{ product.ProductName }}</option>
+            {% endfor %}
+          </datalist>
+        </div>
+        <div class="mb-3">
+          <label for="quantity" class="form-label">Quantity</label>
+          <input type="number" name="quantity" required class="form-control" id="quantity" />
+        </div>
+        <div class="mb-3">
+          <label for="saledate" class="form-label">Sale Date</label>
+          <input type="date" name="saledate" required class="form-control" id="saledate" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped caption-top">
+    <caption>
+      List of sales
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Sale ID</th>
+        <th scope="col">Customer Name</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Product Category</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Unit Price</th>
+        <th scope="col">Total Price</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in sales %}
+      <tr>
+        <th scope="row">{{ sale.SaleDate }}</th>
+        <td>{{ sale.CustomerName }}</td>
+        <td>{{ sale.ProductName }}</td>
+        <td>{{ sale.Category }}</td>
+        <td>{{ sale.Quantity }}</td>
+        <td>{{ sale.Currency }} {{ sale.Price }}</td>
+        <td>{{ sale.Currency }} {{ "{:,.2f}".format(sale.Price * sale.Quantity) }}</td>
+        <td>
+          <a href="/sale/{{ sale.SaleID }}/delete">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <nav>
+    <ul class="pagination">
+      <li class="page-item {% if not has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('sale.index', page=page - 1) }}">Previous</a>
+      </li>
+      <li class="page-item {% if not has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('sale.index', page=page + 1) }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Sale Update</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/sale/update">
+          <input type="hidden" name="businessid">
+          <input type="hidden" name="saleid">
+          <div class="mb-3">
+            <label for="customer" class="form-label">Customer</label>
+            <input type="text" name="customerid" required list="datalistOptionsCustomer" class="form-control" id="customer" placeholder="Search customers..." />
+            <datalist id="datalistOptionsCustomer">
+              {% for customer in customers %}
+                <option value="{{ customer.CustomerID }}">{{ customer.CustomerName }}</option>
+              {% endfor %}
+            </datalist>
+          </div>
+          <div class="mb-3">
+            <label for="product" class="form-label">Product</label>
+            <input type="text" name="productid" required list="datalistOptionsProduct" class="form-control" id="product" placeholder="Search products..." />
+            <datalist id="datalistOptionsProduct">
+              {% for product in products %}
+                <option value="{{ product.ProductID }}">{{ product.ProductName }}</option>
+              {% endfor %}
+            </datalist>
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" name="quantity" required class="form-control" id="quantity" />
+          </div>
+          <div class="mb-3">
+            <label for="saledate" class="form-label">Sale Date</label>
+            <input type="date" name="saledate" required class="form-control" id="saledate" />
+          </div>
+          <button type="submit" class="btn btn-primary">Update Sale</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

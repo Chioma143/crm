@@ -12,6 +12,8 @@ blueprint = Blueprint('group', __name__, url_prefix='/group')
 def index():
   db = get_db()
   error = None
+  # Get business ID
+  businessid = g.user['BusinessID']
 
   # Add pagination to customer lists
   page = request.args.get('page', 1, type=int)
@@ -19,9 +21,12 @@ def index():
   offset = (page - 1) * per_page
 
   groups = db.execute(
-    "SELECT * FROM Company ORDER BY Industry LIMIT ? OFFSET ?",
-    (per_page, offset)
+    "SELECT * FROM Customer WHERE BusinessID = ? ORDER BY Industry LIMIT ? OFFSET ?",
+    (businessid, per_page, offset)
   ).fetchall()
+
+  # Convert Row objects to dictionaries
+  groups = [dict(row) for row in groups]
 
   # Determine if there are more pages
   has_prev = page > 1

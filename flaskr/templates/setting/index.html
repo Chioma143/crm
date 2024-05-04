@@ -1,0 +1,181 @@
+{% extends 'base.html' %} {% block content %}
+<div class="d-block bg-white rounded p-4 mb-3">
+  <p class="d-inline-flex gap-1">
+    <a
+      class="btn btn-primary"
+      data-bs-toggle="collapse"
+      href="#collapseExample"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapseExample"
+    >
+      Create User
+    </a>
+    <a
+      class="btn btn-info"
+      href="/setup/import"
+      role="button"
+    >
+      Import Sample Data
+    </a>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label for="floatingFname">First Name</label>
+          <input type="text" required name="firstname" class="form-control" id="floatingFname" placeholder="name@example.com" />
+        </div>
+        <div class="mb-3">
+          <label for="floatingLname">Last Name</label>
+          <input type="text" required name="lastname" class="form-control" id="floatingLname" placeholder="name@example.com" />
+        </div>
+        <div class="mb-3">
+          <label for="floatingEmail">Email address</label>
+          <input type="email" required name="email" class="form-control" id="floatingEmail" placeholder="name@example.com" />
+        </div>
+        <div class="mb-3">
+          <label for="floatingUsername">Username</label>
+          <input type="text" required name="username" class="form-control" id="floatingUsername" placeholder="bobmarlet" />
+        </div>
+        <div class="mb-3">
+          <label for="floatingPassword">Password</label>
+          <input type="password" required name="password" class="form-control" id="floatingPassword" placeholder="Password" />
+        </div>
+        <div class="mb-3">
+          <label for="floatingUserType">User Type</label>
+          <select name="usertype" required class="form-control" id="floatingUserType">
+            <option disabled selected value="">Select user type</option>
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped caption-top">
+    <caption>
+      List of users
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">First Name</th>
+        <th scope="col">Last Name</th>
+        <th scope="col">Email</th>
+        <th scope="col">Username</th>
+        <th scope="col">User Type</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ user.FirstName|capitalize }}</td>
+        <td>{{ user.LastName|capitalize }}</td>
+        <td>{{ user.Email }}</td>
+        <td>{{ user.Username }}</td>
+        <td>{{ user.UserType|capitalize }}</td>
+        <td>
+          <button
+            type="button" 
+            class="btn btn-sm btn-warning me-2" 
+            onclick="onShowModal(this, {
+              businessid: 'BusinessID',
+              userid: 'UserID',
+              firstname: 'FirstName',
+              lastname: 'LastName',
+              email: 'Email',
+              username: 'Username',
+              // password: 'Password',
+              usertype: 'UserType'
+            }, '#staticBackdrop')" 
+        data-bs-toggle="modal" 
+        data-bs-target="#staticBackdrop" 
+        data-bs-json='{{ user|tojson }}''>
+            Edit
+          </button>
+          <a href="/setting/{{ user.UserID }}/delete">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <nav>
+    <ul class="pagination">
+      <li class="page-item {% if not has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('setting.index', page=page - 1) }}">Previous</a>
+      </li>
+      <li class="page-item {% if not has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('setting.index', page=page + 1) }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">User Update</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/setting/update">
+          <input type="hidden" name="businessid">
+          <input type="hidden" name="userid">
+          <div class="mb-3">
+            <label for="floatingFname">First Name</label>
+            <input type="text" required name="firstname" class="form-control" id="floatingFname" placeholder="name@example.com" />
+          </div>
+          <div class="mb-3">
+            <label for="floatingLname">Last Name</label>
+            <input type="text" required name="lastname" class="form-control" id="floatingLname" placeholder="name@example.com" />
+          </div>
+          <div class="mb-3">
+            <label for="floatingEmail">Email address</label>
+            <input type="email" required name="email" class="form-control" id="floatingEmail" placeholder="name@example.com" />
+          </div>
+          <div class="mb-3">
+            <label for="floatingUsername">Username</label>
+            <input type="text" required name="username" class="form-control" id="floatingUsername" placeholder="bobmarlet" />
+          </div>
+          <div class="mb-3">
+            <label for="floatingPassword">Password</label>
+            <input type="password" name="password" class="form-control" id="floatingPassword" placeholder="Password" />
+          </div>
+          <div class="mb-3">
+            <label for="floatingUserType">User Type</label>
+            <select name="usertype" required class="form-control" id="floatingUserType">
+              <option disabled selected value="">Select user type</option>
+              <option value="admin">Admin</option>
+              <option value="manager">Manager</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

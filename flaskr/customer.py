@@ -12,20 +12,23 @@ blueprint = Blueprint('customer', __name__, url_prefix='/customer')
 def index():
   db = get_db()
   error = None
+  # Get business ID
+  businessid = g.user['BusinessID']
 
   if request.method == 'POST':
     name = request.form['name']
+    email = request.form['email']
+    phone = request.form['phone']
     industry = request.form['industry']
     location = request.form['location']
-    customer = request.form['customer']
 
-    if not name or not industry or not location or not customer:
+    if not name or not email or not phone or not industry or not location:
       error = 'All fields are required.'
     else:
       try:
         db.execute(
-          "INSERT INTO Company (CompanyName, Industry, Location, UserID) VALUES (?, ?, ?, ?)",
-          (name, industry, location, customer)
+          "INSERT INTO Customer (CustomerName, Email, Phone, Industry, Location, BusinessID) VALUES (?, ?, ?, ?, ?, ?)",
+          (name, email, phone, industry, location, businessid)
         )
         db.commit()
         flash('Customer created successfully', 'success')
@@ -39,27 +42,65 @@ def index():
   offset = (page - 1) * per_page
 
   customers = db.execute(
-    "SELECT * FROM Company LIMIT ? OFFSET ?",
-    (per_page, offset)
+    "SELECT * FROM Customer WHERE BusinessID = ? LIMIT ? OFFSET ?",
+    (businessid, per_page, offset)
   ).fetchall()
+
+  # Convert Row objects to dictionaries
+  customers = [dict(row) for row in customers]
 
   # Determine if there are more pages
   has_prev = page > 1
   has_next = len(customers) == per_page
 
-  users = db.execute(
-    "SELECT UserID, Email FROM User"
-  ).fetchall()
-  return render_template('customer/index.html', customers=customers, users=users, has_prev=has_prev, has_next=has_next, page=page)
+  return render_template('customer/index.html', customers=customers, has_prev=has_prev, has_next=has_next, page=page)
+
+@blueprint.route('/update', methods=('POST',))
+@login_required
+def update():
+  db = get_db()
+  error = None
+
+  if request.method == 'POST':
+    try:
+      customerid = request.form['customerid']
+      name = request.form['name']
+      email = request.form['email']
+      phone = request.form['phone']
+      industry = request.form['industry']
+      location = request.form['location']
+
+      # Get business ID
+      businessid = g.user['BusinessID']
+
+      if not customerid or not name or not email or not phone or not industry or not location:
+        error = 'All fields are required.'
+      else:
+        db.execute(
+          "UPDATE Customer SET CustomerName = ?, Email = ?, Phone = ?, Industry = ?, Location = ? WHERE CustomerID = ? AND BusinessID = ?",
+          (name, email, phone, industry, location, customerid, businessid)
+        )
+        db.commit()
+        flash('Customer updated successfully', 'success')
+    except db.Error as e:
+      error = str(e)
+      flash('An error occurred while updating the customer: {}'.format(error), 'error')
+
+  if error:
+    flash(error, 'error')
+
+  return redirect(url_for('customer.index'))
 
 @blueprint.route('/<customer_id>/delete')
 @login_required
 def delete(customer_id):
   db = get_db()
   error = None
+  # Get business ID
+  businessid = g.user['BusinessID']
 
   try:
-    db.execute("DELETE FROM Company WHERE CompanyID = ?", (customer_id,))
+    db.execute("DELETE FROM Customer WHERE CustomerID = ? AND BusinessID = ?", (businessid, customer_id,))
     db.commit()
     flash('Customer deleted successfully', 'success')
   except db.Error as e:

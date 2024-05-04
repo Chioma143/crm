@@ -92,7 +92,7 @@
       }
 
       .form-signin {
-        max-width: 430px;
+        max-width: 550px;
         padding: 1rem;
       }
 
@@ -100,28 +100,16 @@
         z-index: 2;
       }
 
-      .form-signin input[type='email'] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-      }
-
-      .form-signin input[type='text'] {
-        margin-bottom: -1px;
+      .form-signin input {
         border-radius: 0;
-      }
-
-      .form-signin input[type='password'] {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
+        margin-bottom: 15px;
       }
     </style>
   </head>
-  <body class="d-flex align-items-center py-4 bg-body-tertiary">
-    <main class="form-signin w-100 m-auto">
+  <body class="d-flex align-items-center py-4 bg-secondary">
+    <main class="form-signin w-100 m-auto bg-white">
       {% for message in get_flashed_messages() %}
-      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      <div class="alert alert-warning alert-dismissible rounded-0 fade show" role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>

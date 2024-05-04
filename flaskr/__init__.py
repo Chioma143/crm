@@ -1,9 +1,9 @@
 import os
 
-from flask import (Flask, render_template)
+from flask import (Flask, render_template, g)
 from flaskr.auth import login_required
 from flaskr.db import get_db
-from . import (db, auth, customer, group)
+from . import (db, auth, customer, group, product, setting, analytic, sale, setup)
 
 def create_app(test_config=None):
     # create and configure the app
@@ -14,9 +14,14 @@ def create_app(test_config=None):
     )
 
     db.init_app(app)
+    app.register_blueprint(setup.blueprint)
     app.register_blueprint(auth.blueprint)
     app.register_blueprint(customer.blueprint)
     app.register_blueprint(group.blueprint)
+    app.register_blueprint(product.blueprint)
+    app.register_blueprint(setting.blueprint)
+    app.register_blueprint(analytic.blueprint)
+    app.register_blueprint(sale.blueprint)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -36,19 +41,24 @@ def create_app(test_config=None):
     @login_required
     def index():
         db = get_db()
-        total_industries = db.execute(
-            "SELECT COUNT(DISTINCT Industry) AS TotalIndustries FROM Company"
-        ).fetchone()[0]
-        total_customers = db.execute(
-            "SELECT COUNT(*) FROM Company"
-        ).fetchone()[0]
-        total_users = db.execute(
-            "SELECT COUNT(*) FROM User"
-        ).fetchone()[0]
-        chart = db.execute(
-            "SELECT Industry, COUNT(*) AS Total FROM Company GROUP BY Industry;"
+        # Get business ID
+        businessid = g.user['BusinessID']
+        total_industries = db.execute("SELECT COUNT(DISTINCT Industry) AS TotalIndustries FROM Customer WHERE BusinessID = ?", (businessid,)).fetchone()[0]
+        total_customers = db.execute("SELECT COUNT(*) FROM Customer WHERE BusinessID = ?", (businessid,)).fetchone()[0]
+        total_users = db.execute("SELECT COUNT(*) FROM User WHERE BusinessID = ?", (businessid,)).fetchone()[0]
+        total_sales = db.execute("SELECT SUM(s.Quantity * p.Price) AS TotalSales FROM Sales s JOIN Product p ON s.ProductID = p.ProductID WHERE s.BusinessID = ?", (businessid,)).fetchone()[0]
+        chart = db.execute("SELECT Industry, COUNT(*) AS Total FROM Customer WHERE BusinessID = ? GROUP BY Industry;", (businessid,)).fetchall()
+        sales = db.execute(
+            "SELECT s.*, p.*, c.CustomerName FROM Sales s JOIN Product p ON s.ProductID = p.ProductID JOIN Customer c ON s.CustomerID = c.CustomerID WHERE s.BusinessID = ?", (businessid,)
         ).fetchall()
-        return render_template('dashboard.html', total_industries=total_industries, total_customers=total_customers, total_users=total_users, chart=chart)
+
+        if total_sales is not None:
+            total_sales = "£{:,.2f}".format(total_sales)
+        else:
+            total_sales = "0.00"
+        # Convert Row objects to dictionaries
+        sales = [dict(row) for row in sales]
+        return render_template('dashboard.html', total_industries=total_industries, total_customers=total_customers, total_users=total_users, total_sales=total_sales, chart=chart, sales=sales)
 
     @app.route('/hello')
     def hello():

@@ -1,9 +1,19 @@
-@media (prefers-color-scheme: dark) {
-  .bg-white, .bg-light {
-    background-color: #212529 !important; /* Set your desired dark background color */
-    color: #fff; /* Set text color for better contrast */
-  }
-  .bg-light {
-    background-color: #191b1d !important;
-  }
+/* Default styles */
+.bg-white[data-bs-theme="light"], .bg-light[data-bs-theme="light"] {
+  background-color: #fff !important;
+  color: #212529 !important;
+}
+
+.link-secondary.active {
+  color: #0d6efd !important;
+  font-weight: bold;
+}
+
+/* Dark mode styles */
+[data-bs-theme="dark"] .bg-white, [data-bs-theme="dark"] .bg-light {
+  background-color: #212529 !important;
+  color: #fff !important;
+}
+[data-bs-theme="dark"] .bg-light {
+  background-color: #191b1d !important;
 }

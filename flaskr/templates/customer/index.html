@@ -1,5 +1,15 @@
 {% extends 'base.html' %} {% block content %}
 <div class="d-block bg-white rounded p-4 mb-3">
+  <h1 class="fs-2 text-primary"> 
+    {% if g.user %} 
+      {{ g.user.businessname }} - Customers 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </h1>
+  <small class="text-secondary">Customers of each section in the CRM...</small>
+</div>
+<div class="d-block bg-white rounded p-4 mb-3">
   <p class="d-inline-flex gap-1">
     <a
       class="btn btn-primary"
@@ -20,6 +30,14 @@
           <input type="text" name="name" required class="form-control" id="CompanyName" />
         </div>
         <div class="mb-3">
+          <label for="CompanyEmail" class="form-label">Email Address</label>
+          <input type="email" name="email" required class="form-control" id="CompanyEmail" />
+        </div>
+        <div class="mb-3">
+          <label for="CompanyPhone" class="form-label">Phone Number</label>
+          <input type="text" name="phone" required class="form-control" id="CompanyPhone" />
+        </div>
+        <div class="mb-3">
           <label for="CompanyIndustry" class="form-label">Industry</label>
           <input type="text" name="industry" required class="form-control" id="CompanyIndustry" />
         </div>
@@ -27,62 +45,21 @@
           <label for="CompanyLocation" class="form-label">Location</label>
           <input type="text" name="location" required class="form-control" id="CompanyLocation" />
         </div>
-        <div class="mb-3">
-          <label for="UserDataList" class="form-label">Customer</label>
-          <input
-            class="form-control"
-            name="customer"
-            list="datalistOptions"
-            id="UserDataList"
-            placeholder="Type to search..."
-          />
-          <datalist id="datalistOptions">
-            {% for user in users %}
-            <option value="{{ user.UserID }}">{{ user.Email }}</option>
-            {% endfor %}
-          </datalist>
-        </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
   </div>
 
-  <!-- <h1 class="fs-2 text-primary">Customers</h1> -->
-
-  <!-- <table class="table table-striped caption-top">
-    <caption>List of customers</caption>
-    <thead class="table-light">
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Name</th>
-        <th scope="col">Industry</th>
-        <th scope="col">Location</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-    </tbody>
-  </table> -->
-
   <table class="table table-striped caption-top">
     <caption>
       List of customers
     </caption>
-    <thead class="table-light">
+    <thead>
       <tr>
         <th scope="col">#</th>
         <th scope="col">Name</th>
+        <th scope="col">Email Address</th>
+        <th scope="col">Phone Number</th>
         <th scope="col">Industry</th>
         <th scope="col">Location</th>
         <th scope="col">Action</th>
@@ -92,10 +69,29 @@
       {% for customer in customers %}
       <tr>
         <th scope="row">{{ loop.index }}</th>
-        <td>{{ customer.CompanyName }}</td>
+        <td>{{ customer.CustomerName }}</td>
+        <td>{{ customer.Email }}</td>
+        <td>{{ customer.Phone }}</td>
         <td>{{ customer.Industry }}</td>
         <td>{{ customer.Location }}</td>
         <td>
+          <button
+            type="button" 
+            class="btn btn-sm btn-warning me-2" 
+            onclick="onShowModal(this, {
+              businessid: 'BusinessID',
+              customerid: 'CustomerID',
+              name: 'CustomerName',
+              email: 'Email',
+              phone: 'Phone',
+              industry: 'Industry',
+              location: 'Location'
+            }, '#staticBackdrop')" 
+        data-bs-toggle="modal" 
+        data-bs-target="#staticBackdrop" 
+        data-bs-json='{{ customer|tojson }}''>
+            Edit
+          </button>
           <a href="/customer/{{ customer.CompanyID }}/delete">
             <button class="btn btn-sm btn-danger">Delete</button>
           </a>
@@ -104,19 +100,68 @@
       {% endfor %}
     </tbody>
   </table>
-  
+
   <nav>
-  <ul class="pagination">
-    <li class="page-item {% if not has_prev %}disabled{% endif %}">
-      <a class="page-link" href="{{ url_for('customer.index', page=page - 1) }}">Previous</a>
-    </li>
-    <li class="page-item {% if not has_next %}disabled{% endif %}">
-      <a class="page-link" href="{{ url_for('customer.index', page=page + 1) }}">Next</a>
-    </li>
-  </ul>
-</nav>
+    <ul class="pagination">
+      <li class="page-item {% if not has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('customer.index', page=page - 1) }}">Previous</a>
+      </li>
+      <li class="page-item {% if not has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('customer.index', page=page + 1) }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
 
-
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Customer Update</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/customer/update">
+          <input type="hidden" name="businessid">
+          <input type="hidden" name="customerid">
+          <div class="mb-3">
+            <label for="CompanyName" class="form-label">Name</label>
+            <input type="text" name="name" required class="form-control" id="CompanyName" />
+          </div>
+          <div class="mb-3">
+            <label for="CompanyEmail" class="form-label">Email Address</label>
+            <input type="email" name="email" required class="form-control" id="CompanyEmail" />
+          </div>
+          <div class="mb-3">
+            <label for="CompanyPhone" class="form-label">Phone Number</label>
+            <input type="text" name="phone" required class="form-control" id="CompanyPhone" />
+          </div>
+          <div class="mb-3">
+            <label for="CompanyIndustry" class="form-label">Industry</label>
+            <input type="text" name="industry" required class="form-control" id="CompanyIndustry" />
+          </div>
+          <div class="mb-3">
+            <label for="CompanyLocation" class="form-label">Location</label>
+            <input type="text" name="location" required class="form-control" id="CompanyLocation" />
+          </div>
+          <button type="submit" class="btn btn-primary">Update Customer</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

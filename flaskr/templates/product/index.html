@@ -1,0 +1,191 @@
+{% extends 'base.html' %} {% block content %}
+<div class="d-block bg-white rounded p-4 mb-3">
+  <h1 class="fs-2 text-primary"> 
+    {% if g.user %} 
+      {{ g.user.businessname }} - Products 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </h1>
+  <small class="text-secondary">Products of each section in the CRM...</small>
+</div>
+<div class="d-block bg-white rounded p-4 mb-3">
+  <p class="d-inline-flex gap-1">
+    <a
+      class="btn btn-primary"
+      data-bs-toggle="collapse"
+      href="#collapseExample"
+      role="button"
+      aria-expanded="false"
+      aria-controls="collapseExample"
+    >
+      Add New Product
+    </a>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label for="name" class="form-label">Name</label>
+          <input type="text" name="name" required class="form-control" id="name" />
+        </div>
+        <div class="mb-3">
+          <label for="description" class="form-label">Description</label>
+          <input type="text" name="description" required class="form-control" id="description" />
+        </div>
+        <div class="mb-3">
+          <label for="category" class="form-label">Category</label>
+          <input type="text" name="category" required class="form-control" id="category" />
+        </div>
+        <div class="mb-3">
+          <label for="Currency" class="form-label">Currency</label>
+          <input type="text" name="currency" required list="datalistOptions" class="form-control" id="Currency" placeholder="Search currency..." />
+          <datalist id="datalistOptions">
+            <option value="GBP">Great Britain Pound</option>
+            <option value="USD">United States Dollar</option>
+            <option value="EUR">Euro</option>
+            <option value="JPY">Japanese Yen</option>
+            <option value="AUD">Australian Dollar</option>
+            <option value="CAD">Canadian Dollar</option>
+            <option value="CHF">Swiss Franc</option>
+            <option value="CNY">Chinese Yuan</option>
+            <option value="INR">Indian Rupee</option>
+            <option value="RUB">Russian Ruble</option>
+          </datalist>
+        </div>
+        <div class="mb-3">
+          <label for="Price" class="form-label">Price</label>
+          <input type="text" name="price" required class="form-control" id="Price" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <table class="table table-striped caption-top">
+    <caption>
+      List of customers
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Category</th>
+        <th scope="col">Currency</th>
+        <th scope="col">Price</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ product.ProductName }}</td>
+        <td>{{ product.Description }}</td>
+        <td>{{ product.Category }}</td>
+        <td>{{ product.Currency }}</td>
+        <td>{{ product.Price }}</td>
+        <td>
+          <button 
+            type="button" 
+            class="btn btn-sm btn-warning me-2" 
+            onclick="onShowModal(this, {
+              businessid: 'BusinessID',
+              productid: 'ProductID',
+              name: 'ProductName',
+              description: 'Description',
+              price: 'Price',
+              currency: 'Currency',
+              category: 'Category'
+            }, '#staticBackdrop')" 
+            data-bs-toggle="modal" 
+            data-bs-target="#staticBackdrop" 
+            data-bs-json='{{ product|tojson }}''>
+            Edit
+          </button>
+          <a href="/product/{{ product.ProductID }}/delete">
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <nav>
+    <ul class="pagination">
+      <li class="page-item {% if not has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('product.index', page=page - 1) }}">Previous</a>
+      </li>
+      <li class="page-item {% if not has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for('product.index', page=page + 1) }}">Next</a>
+      </li>
+    </ul>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="staticBackdrop"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="staticBackdropLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Product Update</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="/product/update">
+          <input type="hidden" name="businessid">
+          <input type="hidden" name="productid">
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" name="name" required class="form-control" id="name" />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <input type="text" name="description" required class="form-control" id="description" />
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input type="text" name="category" required class="form-control" id="category" />
+          </div>
+          <div class="mb-3">
+            <label for="Currency" class="form-label">Currency</label>
+            <input type="text" name="currency" required list="datalistOptions" class="form-control" id="Currency" placeholder="Search currency..." />
+            <datalist id="datalistOptions">
+              <option value="GBP">Great Britain Pound</option>
+              <option value="USD">United States Dollar</option>
+              <option value="EUR">Euro</option>
+              <option value="JPY">Japanese Yen</option>
+              <option value="AUD">Australian Dollar</option>
+              <option value="CAD">Canadian Dollar</option>
+              <option value="CHF">Swiss Franc</option>
+              <option value="CNY">Chinese Yuan</option>
+              <option value="INR">Indian Rupee</option>
+              <option value="RUB">Russian Ruble</option>
+            </datalist>
+          </div>
+          <div class="mb-3">
+            <label for="Price" class="form-label">Price</label>
+            <input type="text" name="price" required class="form-control" id="Price" />
+          </div>
+          <button type="submit" class="btn btn-primary">Update Product</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

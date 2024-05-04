@@ -11,6 +11,9 @@ def register():
     username = request.form['username']
     email = request.form['email']
     password = request.form['password']
+    firstname = request.form['firstname']
+    lastname = request.form['lastname']
+    businessname = request.form['businessname']
     db = get_db()
     error = None
 
@@ -20,14 +23,49 @@ def register():
       error = 'Email is required'
     elif not password:
       error = 'Password is required'
+    elif not firstname:
+      error = 'First name is required'
+    elif not lastname:
+      error = 'Last name is required'
+    elif not businessname:
+      error = 'Business name is required'
 
     usertype = 'admin'
     
     if error is None:
       try:
+        # Create user
         db.execute(
-          "INSERT INTO User (Username, Email, Password, UserType) VALUES (?, ?, ?, ?)",
-          (username, email, generate_password_hash(password), usertype)
+          "INSERT INTO User (Username, Email, Password, FirstName, LastName, UserType) VALUES (?, ?, ?, ?, ?, ?)",
+          (username, email, generate_password_hash(password), firstname, lastname, usertype)
+        )
+        db.commit()
+
+        # Create business
+        db.execute(
+          "INSERT INTO Business (BusinessName) VALUES (?)",
+          (businessname,)
+        )
+        db.commit()
+
+        # Retrieve newly created business ID
+        business_cur = db.execute(
+          "SELECT BusinessID FROM Business WHERE BusinessName = ?",
+          (businessname,)
+        )
+        business = business_cur.fetchone()
+
+        # Update user with BusinessID
+        db.execute(
+          "UPDATE User SET BusinessID = ? WHERE Username = ?",
+          (business['BusinessID'], username)
+        )
+        db.commit()
+
+        # Create CRM
+        db.execute(
+          "INSERT INTO CRM (CRMName, BusinessID) VALUES (?, ?)",
+          ('Default CRM', business['BusinessID'])
         )
         db.commit()
       except db.IntegrityError:
@@ -71,7 +109,7 @@ def load_logged_in_user():
     g.user = None
   else:
     g.user = get_db().execute(
-      "SELECT * from User WHERE UserID = ?", (user_id,)
+      "SELECT u.*, b.* FROM User u LEFT JOIN Business b ON u.BusinessID = b.BusinessID WHERE u.UserID = ?", (user_id,)
     ).fetchone()
 
 def login_required(view):
