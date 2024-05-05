@@ -16,7 +16,7 @@ python3 -m venv .venv
 Active the corresponding environment using the below code
 
 ```
-. .venv/bin/activate
+.venv\Scripts\activate
 ```
 
 ## Install requirements
