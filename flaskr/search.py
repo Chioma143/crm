@@ -24,8 +24,8 @@ def index():
 
     # Search products
     products = db.execute(
-      "SELECT * FROM Product WHERE BusinessID = ? AND ProductName LIKE ?",
-      (businessid, f'%{search_query}%')
+      "SELECT * FROM Product WHERE BusinessID = ? AND (ProductName LIKE ? OR Category LIKE ?)",
+      (businessid, f'%{search_query}%', f'%{search_query}%')
     ).fetchall()
 
     # Search sales
