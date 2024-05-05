@@ -1,0 +1,108 @@
+{% extends 'base.html' %} 
+{% block content %}
+
+<div class="d-block bg-white rounded p-4 mb-3">
+  <h1 class="fs-2 text-primary"> 
+    {% if g.user %} 
+      {{ g.user.businessname }} - Search Result 
+    {% else %} 
+      Chioma James
+    {% endif %}
+  </h1>
+  <small class="text-secondary">Search section in the CRM...</small>
+</div>
+<div class="d-block bg-white rounded p-4 mb-3">
+  {% if sales %}
+  <table class="table table-striped caption-top">
+    <caption>
+      List of sales
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">Sale ID</th>
+        <th scope="col">Customer Name</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Product Category</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Unit Price</th>
+        <th scope="col">Total Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sale in sales %}
+      <tr>
+        <th scope="row">{{ sale.SaleDate }}</th>
+        <td>{{ sale.CustomerName }}</td>
+        <td>{{ sale.ProductName }}</td>
+        <td>{{ sale.Category }}</td>
+        <td>{{ sale.Quantity }}</td>
+        <td>{{ sale.Currency }} {{ sale.Price }}</td>
+        <td>{{ sale.Currency }} {{ "{:,.2f}".format(sale.Price * sale.Quantity) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if customers %}
+  <table class="table table-striped caption-top">
+    <caption>
+       queried customers
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email Address</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Industry</th>
+        <th scope="col">Location</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for customer in customers %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ customer.CustomerName }}</td>
+        <td>{{ customer.Email }}</td>
+        <td>{{ customer.Phone }}</td>
+        <td>{{ customer.Industry }}</td>
+        <td>{{ customer.Location }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if products %}
+  <table class="table table-striped caption-top">
+    <caption>
+      List of products
+    </caption>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Category</th>
+        <th scope="col">Currency</th>
+        <th scope="col">Price</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ product.ProductName }}</td>
+        <td>{{ product.Description }}</td>
+        <td>{{ product.Category }}</td>
+        <td>{{ product.Currency }}</td>
+        <td>{{ product.Price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+
+{% endblock %}

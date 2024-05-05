@@ -3,7 +3,7 @@ import os
 from flask import (Flask, render_template, g)
 from flaskr.auth import login_required
 from flaskr.db import get_db
-from . import (db, auth, customer, group, product, setting, analytic, sale, setup)
+from . import (db, auth, customer, group, product, setting, analytic, sale, search, setup)
 
 def create_app(test_config=None):
     # create and configure the app
@@ -22,6 +22,7 @@ def create_app(test_config=None):
     app.register_blueprint(setting.blueprint)
     app.register_blueprint(analytic.blueprint)
     app.register_blueprint(sale.blueprint)
+    app.register_blueprint(search.blueprint)
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
