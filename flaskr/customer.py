@@ -100,7 +100,7 @@ def delete(customer_id):
   businessid = g.user['BusinessID']
 
   try:
-    db.execute("DELETE FROM Customer WHERE CustomerID = ? AND BusinessID = ?", (businessid, customer_id,))
+    db.execute("DELETE FROM Customer WHERE CustomerID = ? AND BusinessID = ?", (customer_id, businessid,))
     db.commit()
     flash('Customer deleted successfully', 'success')
   except db.Error as e:
