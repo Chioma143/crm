@@ -18,16 +18,7 @@ def index():
   total_products = db.execute("SELECT COUNT(*) FROM Product WHERE BusinessID = ?", (businessid,)).fetchone()[0]
   total_businesses = db.execute("SELECT COUNT(*) FROM Business").fetchone()[0]
   total_crms = db.execute("SELECT COUNT(*) FROM CRM WHERE BusinessID = ?", (businessid,)).fetchone()[0]
-
-  # Fetch customer analytics by industries
-  customer_industries = db.execute("""
-      SELECT Industry, COUNT(*) AS TotalCustomers
-      FROM Customer
-      WHERE BusinessID = ?
-      GROUP BY Industry
-      ORDER BY TotalCustomers DESC
-      LIMIT 5
-  """, (businessid,)).fetchall()
+  total_sales_quantities = db.execute("SELECT COUNT(s.Quantity) AS TotalQuantity FROM Sales s WHERE s.BusinessID = ?", (businessid,)).fetchone()[0]
 
   # Fetch product analytics by category and price
   product_categories = db.execute("""
@@ -61,8 +52,6 @@ def index():
       'total_businesses': [total_businesses],
       'crm_labels': ['Total CRMs'],
       'total_crms': [total_crms],
-      'customer_industry_labels': [row['Industry'] for row in customer_industries],
-      'customer_industry_data': [row['TotalCustomers'] for row in customer_industries],
       'product_category_labels': [row['Category'] for row in product_categories],
       'product_category_data': [row['TotalProducts'] for row in product_categories],
       'product_avg_price_data': [row['AvgPrice'] for row in product_categories],
@@ -70,4 +59,4 @@ def index():
       'sales_quantity_data': [row['TotalQuantity'] for row in sales_by_quantity]
   }
 
-  return render_template('analytic/index.html', chart_data=chart_data)
+  return render_template('analytic/index.html', chart_data=chart_data, total_sales_quantities=total_sales_quantities)

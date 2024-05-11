@@ -21,7 +21,7 @@ def index():
   offset = (page - 1) * per_page
 
   groups = db.execute(
-    "SELECT * FROM Customer WHERE BusinessID = ? ORDER BY Industry LIMIT ? OFFSET ?",
+    "SELECT * FROM Customer WHERE BusinessID = ? ORDER BY Location LIMIT ? OFFSET ?",
     (businessid, per_page, offset)
   ).fetchall()
 

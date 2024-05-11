@@ -19,8 +19,8 @@
   <div class="col">
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
-        <p class="card-text small text-primary">Total Industries</p>
-        <h5 class="card-title text-primary fs-1 fw-bold">{{ total_industries }}</h5>
+        <p class="card-text small text-primary">Total Sold Products</p>
+        <h5 class="card-title text-primary fs-1 fw-bold">{{ total_sales_quantities }}</h5>
       </div>
     </div>
   </div>
@@ -53,39 +53,47 @@
   <div class="rounded col-7">
     <div class="d-flex justify-content-between align-items-center bg-white p-4 border-bottom">
       <h1 class="lead text-primary fw-bold mb-0">Recent Sales</h1>
-      <small class="text-secondary text-decoration-underline">See all</small>
+      <a href="{{ url_for('sale.index') }}" class="link-secondary">
+        <small>See all</small>
+      </a>
     </div>
     <table class="table align-middle table-hover table-responsive">
       <thead>
         <tr>
-          <th scope="col">Sale ID</th>
+          <th scope="col">Sale Date</th>
           <th scope="col">Product Name</th>
           <th scope="col">Customer Name</th>
           <th scope="col">Product Category</th>
           <th scope="col">Quantity</th>
           <th scope="col">Unit Price</th>
           <th scope="col">Total Price</th>
-          <!-- <th scope="col">Status</th> -->
         </tr>
       </thead>
       <tbody>
         {% for sale in sales %}
         <tr>
-          <th scope="row">{{ loop.index }}</th>
+          <th scope="row">{{ sale.SaleDate }}</th>
           <td>{{ sale.ProductName }}</td>
           <td>{{ sale.CustomerName }}</td>
           <td>{{ sale.Category }}</td>
           <td>{{ sale.Quantity }}</td>
           <td>{{ sale.Currency }} {{ sale.Price }}</td>
           <td>{{ sale.Currency }} {{ "{:,.2f}".format(sale.Price * sale.Quantity) }}</td>
-          <!-- <td>{{ sale.ProductName }}</td> -->
         </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
-  <div class="rounded col">
-    <div class="bg-white rounded p-5">
+  <div class="rounded col-5">
+    <div class="d-block bg-white p-4 border-bottom">
+      <h1 class="lead text-primary fw-bold mb-0">Products Chart by Category</h1>
+    </div>
+    <style>
+      canvas {
+        height: 390px !important;
+      }
+    </style>
+    <div class="bg-white rounded p-2 px-4">
       <canvas id="myChart"></canvas>
     </div>
   </div>
@@ -98,7 +106,7 @@
     labels: [],
     datasets: [
       {
-        label: 'Number of Companies',
+        label: 'Number of Categories',
         data: [],
         backgroundColor: [],
         hoverOffset: 4
@@ -107,7 +115,7 @@
   };
   
   {% for row in chart %}
-    chartData.labels.push('{{ row.Industry }}');
+    chartData.labels.push('{{ row.Category }}');
     chartData.datasets[0].data.push({{ row.Total }});
     // Add dynamic background colors (optional)
     var dynamicColors = () => '#' + Math.floor(Math.random()*16777215).toString(16);
@@ -115,7 +123,7 @@
   {% endfor %}
 
   const config = {
-    type: 'doughnut',
+    type: 'pie',
     data: chartData
   };
   new Chart(ctx, config);

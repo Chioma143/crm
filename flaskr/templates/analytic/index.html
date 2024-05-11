@@ -14,8 +14,16 @@
   <div class="col">
     <div class="card border-0 shadow-sm bg-main-secondary">
       <div class="card-body">
-        <p class="card-text small text-primary">Total Products Sold</p>
+        <p class="card-text small text-primary">Total Products</p>
         <h5 class="card-title text-primary fs-1 fw-bold">{{ chart_data.total_products[0] }}</h5>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="card border-0 shadow-sm bg-main-secondary">
+      <div class="card-body">
+        <p class="card-text small text-primary">Total Sold Products</p>
+        <h5 class="card-title text-primary fs-1 fw-bold">{{ total_sales_quantities }}</h5>
       </div>
     </div>
   </div>
@@ -43,14 +51,8 @@
 <div class="d-block bg-white rounded p-4 mb-3">
   <div class="row mt-4">
     <div class="col-lg-6">
-      <canvas id="customer-industry-chart"></canvas>
-    </div>
-    <div class="col-lg-6">
       <canvas id="product-category-chart"></canvas>
     </div>
-  </div>
-
-  <div class="row mt-4">
     <div class="col-lg-6">
       <canvas id="sales-quantity-chart"></canvas>
     </div>
@@ -59,30 +61,6 @@
 
 <script src="{{ url_for('static', filename='js/chart.umd.js') }}"></script>
 <script>
-  // Customer Industry Chart
-  var customerIndustryChart = new Chart(document.getElementById('customer-industry-chart'), {
-    type: 'bar',
-    data: {
-      labels: {{ chart_data.customer_industry_labels | tojson }},
-      datasets: [{
-        label: 'Total Customers by Industry',
-        data: {{ chart_data.customer_industry_data | tojson }},
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        yAxes: [{
-          ticks: {
-            beginAtZero: true
-          }
-        }]
-      }
-    }
-  });
-
   // Product Category Chart
   var productCategoryChart = new Chart(document.getElementById('product-category-chart'), {
     type: 'bar',

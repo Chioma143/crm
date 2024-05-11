@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS Customer;
 CREATE TABLE Customer (
     CustomerID INTEGER PRIMARY KEY AUTOINCREMENT,
     CustomerName VARCHAR(100) NOT NULL,
-    Email VARCHAR(100) UNIQUE NOT NULL,
+    Email VARCHAR(100) NOT NULL,
     Phone VARCHAR(100) NOT NULL,
-    Industry VARCHAR(100),
+    -- Industry VARCHAR(100),
     Location VARCHAR(100),
     BusinessID INTEGER, -- Added column to represent the business that owns the customer
     FOREIGN KEY (BusinessID) REFERENCES Business(BusinessID)

@@ -18,14 +18,14 @@ def index():
   try:
     # Search customers
     customers = db.execute(
-      "SELECT * FROM Customer WHERE BusinessID = ? AND CustomerName LIKE ?",
-      (businessid, f'%{search_query}%')
+      "SELECT * FROM Customer WHERE BusinessID = ? AND (CustomerName LIKE ? OR Email LIKE ? OR Phone LIKE ? OR Location LIKE ?)",
+      (businessid, f'%{search_query}%', f'%{search_query}%', f'%{search_query}%', f'%{search_query}%')
     ).fetchall()
 
     # Search products
     products = db.execute(
-      "SELECT * FROM Product WHERE BusinessID = ? AND (ProductName LIKE ? OR Category LIKE ?)",
-      (businessid, f'%{search_query}%', f'%{search_query}%')
+      "SELECT * FROM Product WHERE BusinessID = ? AND (ProductName LIKE ? OR Description LIKE ? OR Category LIKE ?)",
+      (businessid, f'%{search_query}%', f'%{search_query}%', f'%{search_query}%')
     ).fetchall()
 
     # Search sales

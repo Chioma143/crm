@@ -19,16 +19,15 @@ def index():
     name = request.form['name']
     email = request.form['email']
     phone = request.form['phone']
-    industry = request.form['industry']
     location = request.form['location']
 
-    if not name or not email or not phone or not industry or not location:
+    if not name or not email or not phone or not location:
       error = 'All fields are required.'
     else:
       try:
         db.execute(
-          "INSERT INTO Customer (CustomerName, Email, Phone, Industry, Location, BusinessID) VALUES (?, ?, ?, ?, ?, ?)",
-          (name, email, phone, industry, location, businessid)
+          "INSERT INTO Customer (CustomerName, Email, Phone, Location, BusinessID) VALUES (?, ?, ?, ?, ?)",
+          (name, email, phone, location, businessid)
         )
         db.commit()
         flash('Customer created successfully', 'success')
@@ -67,18 +66,17 @@ def update():
       name = request.form['name']
       email = request.form['email']
       phone = request.form['phone']
-      industry = request.form['industry']
       location = request.form['location']
 
       # Get business ID
       businessid = g.user['BusinessID']
 
-      if not customerid or not name or not email or not phone or not industry or not location:
+      if not customerid or not name or not email or not phone or not location:
         error = 'All fields are required.'
       else:
         db.execute(
-          "UPDATE Customer SET CustomerName = ?, Email = ?, Phone = ?, Industry = ?, Location = ? WHERE CustomerID = ? AND BusinessID = ?",
-          (name, email, phone, industry, location, customerid, businessid)
+          "UPDATE Customer SET CustomerName = ?, Email = ?, Phone = ?, Location = ? WHERE CustomerID = ? AND BusinessID = ?",
+          (name, email, phone, location, customerid, businessid)
         )
         db.commit()
         flash('Customer updated successfully', 'success')

@@ -38,10 +38,6 @@
           <input type="text" name="phone" required class="form-control" id="CompanyPhone" />
         </div>
         <div class="mb-3">
-          <label for="CompanyIndustry" class="form-label">Industry</label>
-          <input type="text" name="industry" required class="form-control" id="CompanyIndustry" />
-        </div>
-        <div class="mb-3">
           <label for="CompanyLocation" class="form-label">Location</label>
           <input type="text" name="location" required class="form-control" id="CompanyLocation" />
         </div>
@@ -60,7 +56,6 @@
         <th scope="col">Name</th>
         <th scope="col">Email Address</th>
         <th scope="col">Phone Number</th>
-        <th scope="col">Industry</th>
         <th scope="col">Location</th>
         <th scope="col">Action</th>
       </tr>
@@ -72,7 +67,6 @@
         <td>{{ customer.CustomerName }}</td>
         <td>{{ customer.Email }}</td>
         <td>{{ customer.Phone }}</td>
-        <td>{{ customer.Industry }}</td>
         <td>{{ customer.Location }}</td>
         <td>
           <button
@@ -84,7 +78,6 @@
               name: 'CustomerName',
               email: 'Email',
               phone: 'Phone',
-              industry: 'Industry',
               location: 'Location'
             }, '#staticBackdrop')" 
         data-bs-toggle="modal" 
@@ -144,10 +137,6 @@
           <div class="mb-3">
             <label for="CompanyPhone" class="form-label">Phone Number</label>
             <input type="text" name="phone" required class="form-control" id="CompanyPhone" />
-          </div>
-          <div class="mb-3">
-            <label for="CompanyIndustry" class="form-label">Industry</label>
-            <input type="text" name="industry" required class="form-control" id="CompanyIndustry" />
           </div>
           <div class="mb-3">
             <label for="CompanyLocation" class="form-label">Location</label>

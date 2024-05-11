@@ -47,7 +47,7 @@
   {% if customers %}
   <table class="table table-striped caption-top">
     <caption>
-       queried customers
+      queried customers
     </caption>
     <thead>
       <tr>
@@ -55,7 +55,6 @@
         <th scope="col">Name</th>
         <th scope="col">Email Address</th>
         <th scope="col">Phone Number</th>
-        <th scope="col">Industry</th>
         <th scope="col">Location</th>
       </tr>
     </thead>
@@ -66,7 +65,6 @@
         <td>{{ customer.CustomerName }}</td>
         <td>{{ customer.Email }}</td>
         <td>{{ customer.Phone }}</td>
-        <td>{{ customer.Industry }}</td>
         <td>{{ customer.Location }}</td>
       </tr>
       {% endfor %}
