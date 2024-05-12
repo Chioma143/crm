@@ -49,12 +49,15 @@
   </div>
 </div>
 <div class="d-block bg-white rounded p-4 mb-3">
-  <div class="row mt-4">
+  <div class="row g-5 mt-4">
     <div class="col-lg-6">
       <canvas id="product-category-chart"></canvas>
     </div>
     <div class="col-lg-6">
       <canvas id="sales-quantity-chart"></canvas>
+    </div>
+    <div class="col-lg-6">
+      <canvas id="customer-location-chart"></canvas>
     </div>
   </div>
 </div>
@@ -101,6 +104,30 @@
         data: {{ chart_data.sales_quantity_data | tojson }},
         backgroundColor: 'rgba(255, 159, 64, 0.5)',
         borderColor: 'rgba(255, 159, 64, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  });
+
+  // Customer Location Chart
+  var customerLocationChart = new Chart(document.getElementById('customer-location-chart'), {
+    type: 'bar',
+    data: {
+      labels: {{ chart_data.customer_location_labels | tojson }},
+      datasets: [{
+        label: 'Total Customers by Location',
+        data: {{ chart_data.customer_location_data | tojson }},
+        backgroundColor: 'rgba(75, 192, 192, 0.5)',
+        borderColor: 'rgba(75, 192, 192, 1)',
         borderWidth: 1
       }]
     },

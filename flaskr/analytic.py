@@ -22,22 +22,33 @@ def index():
 
   # Fetch product analytics by category and price
   product_categories = db.execute("""
-      SELECT Category, COUNT(*) AS TotalProducts, AVG(Price) AS AvgPrice
-      FROM Product
-      WHERE BusinessID = ?
-      GROUP BY Category
-      ORDER BY TotalProducts DESC
-      LIMIT 5
+    SELECT Category, COUNT(*) AS TotalProducts, AVG(Price) AS AvgPrice
+    FROM Product
+    WHERE BusinessID = ?
+    GROUP BY Category
+    ORDER BY TotalProducts DESC
+    LIMIT 5
   """, (businessid,)).fetchall()
 
   # Fetch sales analytics by quantity
   sales_by_quantity = db.execute("""
-      SELECT ProductID, SUM(Quantity) AS TotalQuantity
-      FROM Sales
-      WHERE BusinessID = ?
-      GROUP BY ProductID
-      ORDER BY TotalQuantity DESC
-      LIMIT 5
+    SELECT p.ProductID, p.ProductName, SUM(s.Quantity) AS TotalQuantity
+    FROM Sales s
+    JOIN Product p ON s.ProductID = p.ProductID
+    WHERE s.BusinessID = ?
+    GROUP BY s.ProductID, p.ProductName
+    ORDER BY TotalQuantity DESC
+    LIMIT 5
+  """, (businessid,)).fetchall()
+  
+  # Fetch customer analytics by location
+  customer_locations = db.execute("""
+    SELECT Location, COUNT(*) AS TotalCustomers
+    FROM Customer
+    WHERE BusinessID = ?
+    GROUP BY Location
+    ORDER BY TotalCustomers DESC
+    LIMIT 5
   """, (businessid,)).fetchall()
 
   # Format data for charts
@@ -55,8 +66,10 @@ def index():
       'product_category_labels': [row['Category'] for row in product_categories],
       'product_category_data': [row['TotalProducts'] for row in product_categories],
       'product_avg_price_data': [row['AvgPrice'] for row in product_categories],
-      'sales_quantity_labels': [row['ProductID'] for row in sales_by_quantity],
-      'sales_quantity_data': [row['TotalQuantity'] for row in sales_by_quantity]
+      'sales_quantity_labels': [row['ProductName'] for row in sales_by_quantity],
+      'sales_quantity_data': [row['TotalQuantity'] for row in sales_by_quantity],
+      'customer_location_labels': [row['Location'] for row in customer_locations],
+      'customer_location_data': [row['TotalCustomers'] for row in customer_locations]
   }
 
   return render_template('analytic/index.html', chart_data=chart_data, total_sales_quantities=total_sales_quantities)
