@@ -47,3 +47,9 @@ flask --app flaskr run --debug
 
 This will start the application in a debug mode and open a port on `5000`
 The project will be accessible on the browser running on `http://127.0.0.1:5000`
+
+## Live deployment address
+
+The project is deployed on PythonAnywhere
+
+The project will be accessible on the internet via `https://chioma.pythonanywhere.com`
